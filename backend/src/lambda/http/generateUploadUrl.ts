@@ -1,26 +1,54 @@
 import 'source-map-support/register'
 
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
-import * as middy from 'middy'
-import { cors, httpErrorHandler } from 'middy/middlewares'
-
-import { createAttachmentPresignedUrl } from '../../businessLogic/todos'
+import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 import { getUserId } from '../utils'
+import { TodosAccess } from '../../helpers/todosAcess'
+import { createLogger } from '../../utils/logger'
+import { attachmentUtils } from '../../helpers/attachmentUtils'
 
-export const handler = middy(
-  async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+const todosAccess = new TodosAccess()
+const logger = createLogger('generateUploadUrl')
+
+export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const todoId = event.pathParameters.todoId
-    // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
+    const userId = getUserId(event)
+ 
+    const item = await todosAccess.getTodoById(todoId)
+    if(item.Count == 0){
+        logger.error(`Cannot find ${todoId}`)
+        return {
+          statusCode: 404,
+          headers: {
+            'Access-Control-Allow-Origin': '*'
+          },
+          body: JSON.stringify(
+            'TodoID not exists in the TodoTable. Pls select a existing one'
+          )
+        }
+    }
+
+    if(item.Items[0].userId !== userId){
+      logger.error(`The User does not have any right to delete this item`)
+      return {
+        statusCode: 400,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify(
+          'No Access rights to delete this users todo'
+        )
+      }
+    }
     
-
-    return undefined
-  }
-)
-
-handler
-  .use(httpErrorHandler())
-  .use(
-    cors({
-      credentials: true
-    })
-  )
+    const url = new attachmentUtils().getPresignedUrl(todoId)
+    logger.error(`Successfully uploaded the Url`)
+        return {
+          statusCode: 200,
+          headers: {
+            'Access-Control-Allow-Origin': '*'
+          },
+          body: JSON.stringify(
+            url
+          )
+        }
+}
