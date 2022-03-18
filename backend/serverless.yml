@@ -77,7 +77,6 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
-          reqValidatorName: RequestBodyValidator
           request:
             schemas:
               application/json: ${file(models/create-todo-model.json)}
@@ -91,7 +90,6 @@ functions:
           method: patch
           cors: true
           authorizer: Auth
-          reqValidatorName: RequestBodyValidator
           path: todos/{todoId}
 
   # TODO: Configure this function
@@ -118,15 +116,6 @@ functions:
 
 resources:
   Resources:
-    RequestBodyValidator:
-      Type: AWS::ApiGateway::RequestValidator
-      Properties:
-        Name: 'request-body-validator'
-        RestApiId:
-          Ref: 'ApiGatewayRestApi'
-        ValidateRequestBody: true
-        ValidateRequestParameters: false
-
     GatewayResponseDefault4XX:
       Type: AWS::ApiGateway::GatewayResponse
       Properties:
