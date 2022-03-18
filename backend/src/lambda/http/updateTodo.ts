@@ -1,27 +1,58 @@
 import 'source-map-support/register'
 
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
-import * as middy from 'middy'
-import { cors, httpErrorHandler } from 'middy/middlewares'
-
-import { updateTodo } from '../../businessLogic/todos'
+import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
 import { getUserId } from '../utils'
+import { createLogger } from '../../utils/logger'
+import { TodosAccess } from '../../helpers/todosAcess'
 
-export const handler = middy(
-  async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+const logger = createLogger('updateTodo')
+const todosAccess = new TodosAccess()
+
+export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  
     const todoId = event.pathParameters.todoId
     const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
-    // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
+    const userId = getUserId(event)
+  
+    const item = await todosAccess.getTodoById(todoId)
+  
+    if(item.Count == 0){
+      logger.error(`Cannot find ${todoId}`)
+      return {
+        statusCode: 404,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify(
+          'TodoID not exists in the TodoTable. Pls select a existing one'
+        )
+      }
+    } 
 
+    if(item.Items[0].userId !== userId){
+      logger.error(`The User does not have any right to delete this item`)
+      return {
+        statusCode: 400,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify(
+          'No Access rights to delete this users todo'
+        )
+      }
+    }
 
-    return undefined
-)
-
-handler
-  .use(httpErrorHandler())
-  .use(
-    cors({
-      credentials: true
-    })
-  )
+    logger.info(`Update Successfully`)
+    await new TodosAccess().updateTodo(updatedTodo,todoId)
+    return {
+      statusCode: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify(
+        'Update successfully'
+      )
+    }
+  
+}
