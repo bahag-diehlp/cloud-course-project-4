@@ -15,7 +15,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       return {
         statusCode: 400,
         headers: {
-          'Access-Control-Allow-Origin': '*'
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true
         },
         body: JSON.stringify(
           'TodoId is empty. Pls setup an id'
@@ -31,7 +32,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         return {
           statusCode: 404,
           headers: {
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true
           },
           body: JSON.stringify(
             'TodoID not exists in the TodoTable. Pls select a existing one'
@@ -44,7 +46,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         return {
           statusCode: 400,
           headers: {
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true
           },
           body: JSON.stringify(
             'No Access rights to delete this users todo'
@@ -57,7 +60,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     return {
       statusCode: 204,
       headers: {
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
       },
       body: JSON.stringify(
         'Deleted successfully'

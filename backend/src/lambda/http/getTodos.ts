@@ -13,16 +13,17 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   
   const userId = getUserId(event) 
   logger.info(`get Todos for user ${userId}`)
-  const result = await new TodosAccess().getUserTodos(userId)
+  const items = await new TodosAccess().getUserTodos(userId)
     
 
   return {
     statusCode: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*'
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true
     },
     body: JSON.stringify({
-      result
+      items
     })
   }
 }
