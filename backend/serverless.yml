@@ -24,6 +24,7 @@ provider:
     USER_ID_INDEX: userId
     S3_BUCKET: cloud-course-project-4-bucket-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
+    AUTH_0_SECRET: pDvwHkTEA5SbLsyHebSt8z4Ny0mo_5gM4KDnhKkAEYOgdf9kTkNXwvYOP7kdrMTT
 
   logs:
     # Enable API Gateway logs

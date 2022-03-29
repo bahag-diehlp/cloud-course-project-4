@@ -19,7 +19,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         return {
           statusCode: 404,
           headers: {
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true
           },
           body: JSON.stringify(
             'TodoID not exists in the TodoTable. Pls select a existing one'
@@ -32,7 +33,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       return {
         statusCode: 400,
         headers: {
-          'Access-Control-Allow-Origin': '*'
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true
         },
         body: JSON.stringify(
           'No Access rights to delete this users todo'
@@ -41,14 +43,16 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     }
     
     const url = new attachmentUtils().getPresignedUrl(todoId)
-    logger.error(`Successfully uploaded the Url`)
+    logger.info(url)
+    logger.info(`Successfully uploaded the Url`)
         return {
           statusCode: 200,
           headers: {
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true
           },
-          body: JSON.stringify(
-            url
-          )
+          body: JSON.stringify({
+            ['uploadUrl']: url
+          })
         }
 }
