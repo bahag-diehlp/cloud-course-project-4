@@ -2,7 +2,7 @@ import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 import { getUserId } from '../utils'
-import { TodosAccess } from '../../helpers/todosAcess'
+import { TodosAccess } from '../../dataLayer/todosAcess'
 import { createLogger } from '../../utils/logger'
 
 const todosAccess = new TodosAccess()

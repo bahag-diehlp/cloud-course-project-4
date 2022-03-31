@@ -14,7 +14,7 @@ import {
   Loader
 } from 'semantic-ui-react'
 
-import { createTodo, deleteTodo, getTodos, patchTodo } from '../api/todos-api'
+import { createTodo, deleteTodo, getTodos, patchTodo, getUploadUrl } from '../api/todos-api'
 import Auth from '../auth/Auth'
 import { Todo } from '../types/Todo'
 
@@ -165,6 +165,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
     return (
       <Grid padded>
         {this.state.todos.map((todo, pos) => {
+          console.log(todo.attachmentUrl)
           return (
             <Grid.Row key={todo.todoId}>
               <Grid.Column width={1} verticalAlign="middle">
@@ -196,10 +197,8 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
                 >
                   <Icon name="delete" />
                 </Button>
-              </Grid.Column>
-              {todo.attachmentUrl && (
-                <Image src={todo.attachmentUrl} size="small" wrapped />
-              )}
+              </Grid.Column>            
+                <Image src={todo.attachmentUrl} wrapped />            
               <Grid.Column width={16}>
                 <Divider />
               </Grid.Column>
@@ -208,6 +207,18 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
         })}
       </Grid>
     )
+  }
+
+  onTodoUrl = async (todoId: string) => {
+    try {
+
+      const newTodo = await getUploadUrl(this.props.auth.getIdToken(), todoId)
+
+      console.log(`${newTodo}.png`)
+      return `${newTodo}.png`;
+    } catch {
+      alert('could not get the Url')
+    }
   }
 
   calculateDueDate(): string {
