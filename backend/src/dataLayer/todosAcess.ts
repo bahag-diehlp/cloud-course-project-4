@@ -18,6 +18,8 @@ export class TodosAccess{
 
     async getUserTodos(userId: string): Promise<TodoItem[]>{
         logger.info('start get Todos');
+        logger.info(this.todosTable);
+        logger.info(this.userIdIndex);
         const result = await this.docClient.query({
             TableName: this.todosTable,
             IndexName: this.userIdIndex,
@@ -26,6 +28,7 @@ export class TodosAccess{
                 ':userId':userId
             }
         }).promise()
+        console.log('Get group: ', result)
         return result.Items as TodoItem[]
     }
 

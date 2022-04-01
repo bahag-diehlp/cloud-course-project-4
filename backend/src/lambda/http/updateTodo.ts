@@ -4,7 +4,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
 import { getUserId } from '../utils'
 import { createLogger } from '../../utils/logger'
-import { TodosAccess } from '../../helpers/todosAcess'
+import { TodosAccess } from '../../dataLayer/todosAcess'
 
 const logger = createLogger('updateTodo')
 const todosAccess = new TodosAccess()

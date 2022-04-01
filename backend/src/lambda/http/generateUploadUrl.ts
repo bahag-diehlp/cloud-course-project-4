@@ -2,10 +2,11 @@ import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 import { getUserId } from '../utils'
-import { TodosAccess } from '../../helpers/todosAcess'
+import { TodosAccess } from '../../dataLayer/todosAcess'
 import { createLogger } from '../../utils/logger'
 import { attachmentUtils } from '../../helpers/attachmentUtils'
 
+const au = new attachmentUtils();
 const todosAccess = new TodosAccess()
 const logger = createLogger('generateUploadUrl')
 
@@ -42,8 +43,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       }
     }
     
-    const url = new attachmentUtils().getPresignedUrl(todoId)
-    logger.info(url)
+    const uploadUrl = await au.getPresignedUrl(todoId);
+    logger.info(uploadUrl)
     logger.info(`Successfully uploaded the Url`)
         return {
           statusCode: 200,
@@ -52,7 +53,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
             'Access-Control-Allow-Credentials': true
           },
           body: JSON.stringify({
-            ['uploadUrl']: url
+            ["uploadUrl"]: uploadUrl
           })
         }
 }

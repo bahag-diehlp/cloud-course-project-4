@@ -3,7 +3,7 @@ import 'source-map-support/register'
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import { getUserId } from '../utils';
 import { createLogger } from '../../utils/logger'
-import { TodosAccess } from '../../helpers/todosAcess'
+import { TodosAccess } from '../../dataLayer/todosAcess'
 
 const logger = createLogger('createTodos')
 
