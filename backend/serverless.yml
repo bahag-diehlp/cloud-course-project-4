@@ -20,7 +20,7 @@ provider:
   # Use these variables in the functions and resouorces section below. For example, 
   # ${self:provider.environment.ATTACHMENT_S3_BUCKET}
   environment:
-    TODOS_TABLE: Todoso-${self:provider.stage}
+    TODOS_TABLE: TodosOne-${self:provider.stage}
     USER_ID_INDEX: userId
     S3_BUCKET: cloud-course-project-4-bucket-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
@@ -275,6 +275,8 @@ resources:
         KeySchema:
           - AttributeName: todoId
             KeyType: HASH
+          - AttributeName: userId
+            KeyType: RANGE
         GlobalSecondaryIndexes:
           - IndexName: ${self:provider.environment.USER_ID_INDEX}
             KeySchema:
