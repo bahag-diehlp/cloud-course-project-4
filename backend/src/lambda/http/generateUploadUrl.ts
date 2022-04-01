@@ -43,7 +43,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       }
     }
     
-    const uploadUrl = await au.generateUploadUrl(todoId, userId);
+    const uploadUrl = await au.getPresignedUrl(todoId);
     logger.info(uploadUrl)
     logger.info(`Successfully uploaded the Url`)
         return {
